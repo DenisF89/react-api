@@ -29,8 +29,8 @@ useEffect(() => {
 }, [])
 
 useEffect(()=>{
- setList(actresses);
-},[actresses])
+ setList([ ...actresses,...actors]);
+},[actresses,actors])
 
 useEffect(() => {
   console.log(actresses.map(actress=>actress.name))
@@ -56,7 +56,9 @@ useEffect(() => {
                     biography:bio,
                     image,
                     awards,
-                    genre
+                    genre,
+                    most_famous_movies:movies,
+                    known_for:film
                   } = person;
 
             return(
@@ -67,6 +69,13 @@ useEffect(() => {
                 <p>Nazionalità: {country}</p>
                 <div>Biografia: {bio}</div>
                 <div>Riconoscimenti: {awards}</div>
+                <div>Film:
+                  <ul>
+                    {(genre==="female"?movies:film).map((movie,i) => (
+                        <li key={movie+"-"+i}>{movie}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             );
 
