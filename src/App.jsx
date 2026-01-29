@@ -7,6 +7,7 @@ function App() {
   const apiurl = {  actresses:  "https://lanciweb.github.io/demo/api/actresses/",
                     actors:     "https://lanciweb.github.io/demo/api/actors/"}
 
+  const [page,setPage] = useState(1)
   const [actresses,setActresses] = useState([])                         //Lista attrici         
   const [actors,setActors] = useState([])                               //Lista attori
   const [list, setList] = useState([])                                  //Lista da visualizzare
@@ -29,7 +30,7 @@ function App() {
     }
 
     function riordina(array){
-      return ([...array].sort((a,b)=>a.name<b.name?-1:1));                   //sort riordina array (-1 viene prima, 1 viene dopo)
+      return (array.sort((a,b)=>a.name<b.name?-1:1));                   //sort riordina array (-1 viene prima, 1 viene dopo)
     }
       
 
@@ -49,17 +50,35 @@ useEffect(() => {
   console.log(actors.map(actor=>actor))
 }, [actors]) 
 
+useEffect(() => {
+  setPage(1)
+}, [list])
+
 
   return(
       <>
         <nav>
-        <button onClick={() => setList(riordina([ ...actresses,...actors]))}>Tutti</button>
-        <button onClick={() => setList(actresses)}>Attrici</button>
-        <button onClick={() => setList(actors)}>Attori</button>
+          <div>
+            <button onClick={() => setList(riordina([ ...actresses,...actors]))}>Tutti</button>
+            <button onClick={() => setList(actresses)}>Attrici</button>
+            <button onClick={() => setList(actors)}>Attori</button>
+          </div>
+          <div>
+            <button onClick={()=> setPage(1)}>1</button>
+            <button onClick={()=> setPage(2)}>2</button>
+            <button onClick={()=> setPage(3)}>3</button>
+            <button onClick={()=> setPage(4)}>4</button>
+            <button onClick={()=> setPage(5)}>5</button>
+          </div>
         </nav>
       
         <div className="card-container">
-          {list.map(person=>{
+          {(page===1?list.slice(0,8)
+          :page===2?list.slice(8,16)
+          :page===3?list.slice(16,24)
+          :page===4?list.slice(24,32)
+          :list.slice(32,40))
+          .map(person=>{
             const { id,
                     name,
                     birth_year:year,
