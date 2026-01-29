@@ -7,10 +7,13 @@ function App() {
   const apiurl = {  actresses:  "https://lanciweb.github.io/demo/api/actresses/",
                     actors:     "https://lanciweb.github.io/demo/api/actors/"}
 
+  const [filter,setFilter] = useState(0)
   const [page,setPage] = useState(1)
   const [actresses,setActresses] = useState([])                         //Lista attrici         
   const [actors,setActors] = useState([])                               //Lista attori
   const [list, setList] = useState([])                                  //Lista da visualizzare
+
+  const cardxpage = 8                                                   //card per pagina
 
     const getData = ()=>{
 
@@ -32,6 +35,29 @@ function App() {
     function riordina(array){
       return (array.sort((a,b)=>a.name<b.name?-1:1));                   //sort riordina array (-1 viene prima, 1 viene dopo)
     }
+
+    function filtra(filtro){
+      
+        let lista = [];
+        let index = 0;
+        if(filtro==="attori")
+          { 
+            lista = [...actors]; 
+            index = 2;
+            
+          }
+        else if(filtro==="attrici")
+          {
+            lista = [...actresses];
+            index = 1;
+          }
+        else{
+            lista = riordina([ ...actresses,...actors]);
+          }
+        setList(lista); 
+        setFilter(index);
+        
+    }
       
 
 useEffect(() => {                                     //al caricamento pagina - 1 volta
@@ -43,41 +69,35 @@ useEffect(()=>{
 },[actresses,actors])                                 //quando cambiano gli state (dopo chiamate axios)
 
 
-useEffect(() => {
+/* useEffect(() => {
   console.log(actresses.map(actress=>actress))
 }, [actresses])
 useEffect(() => {
   console.log(actors.map(actor=>actor))
-}, [actors]) 
+}, [actors])  */
 
 useEffect(() => {
-  setPage(1)
-}, [list])
+  setPage(1)                                          //Torna in prima pagina
+}, [list])                                            //quando cambia la lista
 
 
   return(
       <>
         <nav>
           <div>
-            <button onClick={() => setList(riordina([ ...actresses,...actors]))}>Tutti</button>
-            <button onClick={() => setList(actresses)}>Attrici</button>
-            <button onClick={() => setList(actors)}>Attori</button>
+            <button className={filter===0?"active":""} onClick={e=>filtra("tutti")}>Tutti</button>
+            <button className={filter===1?"active":""} onClick={e=>filtra("attrici")}>Attrici</button>
+            <button className={filter===2?"active":""} onClick={e=>filtra("attori")}>Attori</button>
           </div>
           <div>
-            <button onClick={()=> setPage(1)}>1</button>
-            <button onClick={()=> setPage(2)}>2</button>
-            <button onClick={()=> setPage(3)}>3</button>
-            <button onClick={()=> setPage(4)}>4</button>
-            <button onClick={()=> setPage(5)}>5</button>
+            {[...Array(Math.ceil(list.length/cardxpage))].map((_, i) => 
+              <button className={i+1===page?"active":""} key={i} onClick={()=> setPage(i+1)}>{i+1}</button>
+            )}
           </div>
         </nav>
       
         <div className="card-container">
-          {(page===1?list.slice(0,8)
-          :page===2?list.slice(8,16)
-          :page===3?list.slice(16,24)
-          :page===4?list.slice(24,32)
-          :list.slice(32,40))
+          {list.slice((page-1)*cardxpage,page*cardxpage)
           .map(person=>{
             const { id,
                     name,
@@ -92,7 +112,7 @@ useEffect(() => {
                   } = person;
 
             return(
-              <div key={genre+"-"+id} className="card">       {/* per evitare id doppio genre+id = male-1, female-1, male-2 ecc.. */}
+              <div key={genre+"-"+id} className="card">       {/*  male-1, female-1, male-2 ecc.. */}
                 <h3>{name}</h3>
               <img
                 src={image}

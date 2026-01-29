@@ -86,3 +86,7 @@ nav div{
   gap:10px;
   padding:20px;
 }
+
+.active{
+    background-color: #f1f1f1;
+}
