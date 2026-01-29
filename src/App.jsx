@@ -6,7 +6,7 @@ function App() {
   const apiurl = {  actresses:  "https://lanciweb.github.io/demo/api/actresses/",
                     actors:     "https://lanciweb.github.io/demo/api/actors/"}
 
-  const [actresses,setActresses] = useState([])
+  const [actresses,setActresses] = useState([])                         
   const [actors,setActors] = useState([])
   const [list, setList] = useState([])
 
@@ -14,35 +14,45 @@ function App() {
 
       axios.get(apiurl.actresses).then(res=>{
         const list = [...res.data.map(p=>({...p,genre:"female"}))];
+        riordina(list);
         setActresses(list);
       }).catch(error =>{console.error(error+": chiamata fallita")});
 
       axios.get(apiurl.actors).then(res=>{
         const list = [...res.data.map(p=>({...p,genre:"male"}))];
+        riordina(list);
         setActors(list);
       }).catch(error =>{console.error(error+": chiamata fallita")});
 
     }
+
+    function riordina(array){
+      return (array.sort((a,b)=>a.name>b.name?1:-1));
+    }
+      
+      
 
 useEffect(() => {
   getData();
 }, [])
 
 useEffect(()=>{
- setList([ ...actresses,...actors]);
+ setList(riordina([ ...actresses,...actors]));
 },[actresses,actors])
 
+/* 
 useEffect(() => {
   console.log(actresses.map(actress=>actress.name))
 }, [actresses])
 useEffect(() => {
   console.log(actors.map(actor=>actor.name))
-}, [actors])
+}, [actors]) 
+*/
 
   return(
       <>
         <nav>
-        <button onClick={() => setList([ ...actresses,...actors])}>Tutti</button>
+        <button onClick={() => setList(riordina([ ...actresses,...actors]))}>Tutti</button>
         <button onClick={() => setList(actresses)}>Attrici</button>
         <button onClick={() => setList(actors)}>Attori</button>
         </nav>

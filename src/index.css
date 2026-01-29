@@ -68,6 +68,7 @@ button:focus-visible {
 */
 
 .card-container{
+  padding:20px;
   display:flex;
   gap:10px;
 }
@@ -79,4 +80,9 @@ button:focus-visible {
 
 .card img{
   width: 100%;
+}
+nav{
+  display: flex;
+  gap:10px;
+  padding:20px;
 }
