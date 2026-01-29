@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import defaultImg from "./assets/default.png";
 
 function App() {
 
@@ -28,9 +29,8 @@ function App() {
     }
 
     function riordina(array){
-      return (array.sort((a,b)=>a.name<b.name?-1:1));                   //sort riordina array (-1 viene prima, 1 viene dopo)
+      return ([...array].sort((a,b)=>a.name<b.name?-1:1));                   //sort riordina array (-1 viene prima, 1 viene dopo)
     }
-      
       
 
 useEffect(() => {                                     //al caricamento pagina - 1 volta
@@ -75,7 +75,14 @@ useEffect(() => {
             return(
               <div key={genre+"-"+id} className="card">       {/* per evitare id doppio genre+id = male-1, female-1, male-2 ecc.. */}
                 <h3>{name}</h3>
-                <img src={image} alt={name} />
+              <img
+                src={image}
+                alt={name}
+                onError={(e) => {
+                  e.currentTarget.src = defaultImg;
+                  e.currentTarget.onerror = null;
+                }}
+/>
                 <p>Anno di nascita: {year}</p>
                 <p>Nazionalità: {country}</p>
                 <div>Biografia: {bio}</div>
@@ -90,7 +97,7 @@ useEffect(() => {
                 </div>
                 <div>Film:
                   <ul>
-                    {(genre==="female"?movies:film).map((movie,i) => (    //ciclo la proprietà movie o film a seconda del genere
+                    {(genre==="female"?movies:film).map((movie,i) => (  //ciclo la proprietà movie o film a seconda del genere
                         <li key={i+"-"+movie+"-"+name}>{movie}</li>       
                     ))}
                   </ul>
