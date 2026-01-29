@@ -8,6 +8,7 @@ function App() {
 
   const [actresses,setActresses] = useState([])
   const [actors,setActors] = useState([])
+  const [list, setList] = useState([])
 
     const getData = ()=>{
 
@@ -22,8 +23,12 @@ function App() {
     }
      
 useEffect(() => {
-  getData()
+  getData();
 }, [])
+
+useEffect(()=>{
+ setList(actresses);
+},[actresses])
 
 useEffect(() => {
   console.log(actresses.map(actress=>actress.name))
@@ -34,6 +39,35 @@ useEffect(() => {
 
   return(
       <>
+        <nav>
+        <button onClick={() => setList(actresses)}>Attrici</button>
+        <button onClick={() => setList(actors)}>Attori</button>
+        </nav>
+      
+        <div className="card-container">
+          {list.map(person=>{
+            const { id,
+                    name,
+                    birth_year:year,
+                    nationality:country,
+                    biography:bio,
+                    image,
+                    awards,
+                  } = person;
+
+            return(
+              <div key={id} className="card">
+                <h3>{name}</h3>
+                <img src={image} alt={name} />
+                <p>Anno di nascita: {year}</p>
+                <p>Nazionalità: {country}</p>
+                <div>Biografia: {bio}</div>
+                <div>Riconoscimenti: {awards}</div>
+              </div>
+            );
+
+          })}
+        </div>
       </>
   )
 }
