@@ -13,15 +13,17 @@ function App() {
     const getData = ()=>{
 
       axios.get(apiurl.actresses).then(res=>{
-        setActresses(res.data);
+        const list = [...res.data.map(p=>({...p,genre:"female"}))];
+        setActresses(list);
       }).catch(error =>{console.error(error+": chiamata fallita")});
 
       axios.get(apiurl.actors).then(res=>{
-        setActors(res.data);
+        const list = [...res.data.map(p=>({...p,genre:"male"}))];
+        setActors(list);
       }).catch(error =>{console.error(error+": chiamata fallita")});
 
     }
-     
+
 useEffect(() => {
   getData();
 }, [])
@@ -40,6 +42,7 @@ useEffect(() => {
   return(
       <>
         <nav>
+        <button onClick={() => setList([ ...actresses,...actors])}>Tutti</button>
         <button onClick={() => setList(actresses)}>Attrici</button>
         <button onClick={() => setList(actors)}>Attori</button>
         </nav>
@@ -53,10 +56,11 @@ useEffect(() => {
                     biography:bio,
                     image,
                     awards,
+                    genre
                   } = person;
 
             return(
-              <div key={id} className="card">
+              <div key={genre+"-"+id} className="card">
                 <h3>{name}</h3>
                 <img src={image} alt={name} />
                 <p>Anno di nascita: {year}</p>
