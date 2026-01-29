@@ -41,14 +41,14 @@ useEffect(()=>{
  setList(riordina([ ...actresses,...actors]));        //carica lista mista e riordinala
 },[actresses,actors])                                 //quando cambiano gli state (dopo chiamate axios)
 
-/* 
+
 useEffect(() => {
-  console.log(actresses.map(actress=>actress.name))
+  console.log(actresses.map(actress=>actress))
 }, [actresses])
 useEffect(() => {
-  console.log(actors.map(actor=>actor.name))
+  console.log(actors.map(actor=>actor))
 }, [actors]) 
-*/
+
 
   return(
       <>
@@ -79,7 +79,15 @@ useEffect(() => {
                 <p>Anno di nascita: {year}</p>
                 <p>Nazionalità: {country}</p>
                 <div>Biografia: {bio}</div>
-                <div>Riconoscimenti: {awards}</div>
+                <div>Riconoscimenti: 
+                  <ul>
+                    {(Array.isArray(awards)                       //se la proprietà è un array 
+                      ?awards                                     //lascia l'array
+                      :awards.split(",")                          //trasforma la stringa in array dividendola ad ogni ","
+                    ).map((award,i)=><li key={i}>{award}</li>)    //mappa tutti i premi e mettili in una lista
+                    }
+                  </ul>
+                </div>
                 <div>Film:
                   <ul>
                     {(genre==="female"?movies:film).map((movie,i) => (    //ciclo la proprietà movie o film a seconda del genere
