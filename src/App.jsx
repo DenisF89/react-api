@@ -6,19 +6,20 @@ function App() {
   const apiurl = {  actresses:  "https://lanciweb.github.io/demo/api/actresses/",
                     actors:     "https://lanciweb.github.io/demo/api/actors/"}
 
-  const [actresses,setActresses] = useState([])                         
-  const [actors,setActors] = useState([])
-  const [list, setList] = useState([])
+  const [actresses,setActresses] = useState([])                         //Lista attrici         
+  const [actors,setActors] = useState([])                               //Lista attori
+  const [list, setList] = useState([])                                  //Lista da visualizzare
 
     const getData = ()=>{
 
-      axios.get(apiurl.actresses).then(res=>{
-        const list = [...res.data.map(p=>({...p,genre:"female"}))];
-        riordina(list);
-        setActresses(list);
-      }).catch(error =>{console.error(error+": chiamata fallita")});
+      axios.get(apiurl.actresses).then(res=>{                           //Chiamata API axios
+        const list = [...res.data.map(p=>({...p,genre:"female"}))];     //data contiene l'array di oggetti(attrici), aggiungo proprietà genere f/m 
+                                                                        //per gestione id uguale m/f e gestione nome proprietà diverse
+        riordina(list);                                                 //chiamo funzione per riordino alfabetico dell'array per nome attore
+        setActresses(list);                                             //salvo lo stato actresses con la lista elaborata
+      }).catch(error =>{console.error(error+": chiamata fallita")});    //catch per gestione errori
 
-      axios.get(apiurl.actors).then(res=>{
+      axios.get(apiurl.actors).then(res=>{                              //come sopra per l'altra chiamata attori
         const list = [...res.data.map(p=>({...p,genre:"male"}))];
         riordina(list);
         setActors(list);
@@ -27,18 +28,18 @@ function App() {
     }
 
     function riordina(array){
-      return (array.sort((a,b)=>a.name>b.name?1:-1));
+      return (array.sort((a,b)=>a.name<b.name?-1:1));                   //sort riordina array (-1 viene prima, 1 viene dopo)
     }
       
       
 
-useEffect(() => {
-  getData();
-}, [])
+useEffect(() => {                                     //al caricamento pagina - 1 volta
+  getData();                                          //fa richiesta axios 
+}, [])                                                //nessuna dipendenza: solo 1 volta al caricamento pagina
 
 useEffect(()=>{
- setList(riordina([ ...actresses,...actors]));
-},[actresses,actors])
+ setList(riordina([ ...actresses,...actors]));        //carica lista mista e riordinala
+},[actresses,actors])                                 //quando cambiano gli state (dopo chiamate axios)
 
 /* 
 useEffect(() => {
@@ -66,13 +67,13 @@ useEffect(() => {
                     biography:bio,
                     image,
                     awards,
-                    genre,
-                    most_famous_movies:movies,
-                    known_for:film
+                    genre,                       //aggiunto con valore "female"(actresses) o "male"(actors)
+                    most_famous_movies:movies,   //valido per actresses
+                    known_for:film               //valido per actors
                   } = person;
 
             return(
-              <div key={genre+"-"+id} className="card">
+              <div key={genre+"-"+id} className="card">       {/* per evitare id doppio genre+id = male-1, female-1, male-2 ecc.. */}
                 <h3>{name}</h3>
                 <img src={image} alt={name} />
                 <p>Anno di nascita: {year}</p>
@@ -81,8 +82,8 @@ useEffect(() => {
                 <div>Riconoscimenti: {awards}</div>
                 <div>Film:
                   <ul>
-                    {(genre==="female"?movies:film).map((movie,i) => (
-                        <li key={movie+"-"+i}>{movie}</li>
+                    {(genre==="female"?movies:film).map((movie,i) => (    //ciclo la proprietà movie o film a seconda del genere
+                        <li key={i+"-"+movie+"-"+name}>{movie}</li>       
                     ))}
                   </ul>
                 </div>
