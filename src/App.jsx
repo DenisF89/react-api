@@ -14,6 +14,7 @@ function App() {
   const [list, setList] = useState([])                                  //Lista da visualizzare
 
   const cardxpage = 8                                                   //card per pagina
+  const pages = (Math.ceil(list.length/cardxpage))
 
     const getData = ()=>{
 
@@ -58,6 +59,10 @@ function App() {
         setFilter(index);
         
     }
+
+    function changePage(e){
+      setPage(Number(e.target.value))
+    }
       
 
 useEffect(() => {                                     //al caricamento pagina - 1 volta
@@ -90,9 +95,12 @@ useEffect(() => {
             <button className={filter===2?"active":""} onClick={e=>filtra("attori")}>Attori</button>
           </div>
           <div>
-            {[...Array(Math.ceil(list.length/cardxpage))].map((_, i) => 
-              <button className={i+1===page?"active":""} key={i} onClick={()=> setPage(i+1)}>{i+1}</button>
-            )}
+              <button value={page-1} disabled={page===1} onClick={changePage}>{"<"}</button>
+              {[...Array(pages)].map((_, i) =>
+                <button value={i+1} className={(i+1)===page?"active":""} key={i} onClick={changePage}>{i+1}</button>
+              )}
+              {page!==pages && 
+                <button value={page+1} onClick={changePage}>{">"}</button>}
           </div>
         </nav>
       
